@@ -1,0 +1,28 @@
+version: '2'
+services:
+  image-up-down:
+    container_name: image-up-down
+    build: ./docker-compose/app
+    ports:
+      - 8002:80
+    volumes:
+      - ./app:/var/www/html
+      - ./docker-compose/app/log/nginx:/var/log/nginx
+      - ./docker-compose/app/log/php-fpm:/var/log/php-fpm
+    links:
+      - "image-up-down-db:image-up-down-db"
+    environment:
+      TZ: "Asia/Tokyo"
+    command: /sbin/init
+    privileged: true
+  image-up-down-db:
+    container_name: image-up-down-db
+    image: mysql:5.7
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      TZ: "Asia/Tokyo"
+    ports:
+      - 3306:3306
+    volumes:
+      - ./docker-compose/db:/var/lib/mysql
+    privileged: true
